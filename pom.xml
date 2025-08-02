@@ -20,6 +20,10 @@
         <repository>
             <id>MyEpicRepo</id>
             <url>https://myepicwebsite.net/maven-repo</url>
+            <!-- Enable snapshot versions since craftbukkit is a snapshot version -->
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
         </repository>
     </repositories>
 
