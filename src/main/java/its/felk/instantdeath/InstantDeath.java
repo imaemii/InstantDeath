@@ -11,7 +11,7 @@ public final class InstantDeath extends JavaPlugin {
     @Override
     public void onEnable() {
         getLogger().info("[InstantDeath] Made with love by Emilia");
-        getLogger().info("[InstantDeath] Checkout myepicwebsite.net");
+        getLogger().info("[InstantDeath] Checkout MyEpicWebsite.net");
         getLogger().info("[InstantDeath] Trans lives matter! :3");
     }
 
