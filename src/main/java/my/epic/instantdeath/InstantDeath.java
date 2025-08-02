@@ -66,6 +66,7 @@ public final class InstantDeath extends JavaPlugin {
                     Player targetPlayer = getServer().getPlayerExact(args[0]);
                     if (targetPlayer != null) {
                         handleKill(targetPlayer, false, player);
+                        // Inform the killer with a message without coords
                         String msg = formatMessage(getMessage("target-kill"), targetPlayer, player);
                         player.sendMessage(msg);
                     } else {
@@ -104,7 +105,12 @@ public final class InstantDeath extends JavaPlugin {
             target.sendMessage(msg);
         } else {
             target.damage(Float.MAX_VALUE, killer);
-            // No custom killed-by-other message to let vanilla handle death messages
+            boolean showDeathLoc = getConfig().getBoolean("settings.show-death-location-on-kill", false);
+            if (showDeathLoc) {
+                String deathLocMsg = formatMessage(getMessage("death-location"), target, killer);
+                target.sendMessage(deathLocMsg);
+            }
+            // killer gets target-kill message (already handled in onCommand)
         }
     }
 
