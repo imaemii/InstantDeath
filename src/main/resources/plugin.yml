@@ -1,14 +1,27 @@
 name: InstantDeath
-version: 'v1.0.0'
+version: 'v2.0.0'
 main: my.epic.instantdeath.InstantDeath
 api-version: '1.6.1'
-authors: [ Emilia ]
+authors:
+  - Emilia
 description: A simple plugin that lets you kill yourself with /kill without needing any special permissions
 website: https://MyEpicWebsite.net
 folia-supported: true
+
 commands:
   kill:
-    description: Kill yourself
+    description: Kill yourself or another player (if permitted)
     aliases:
       - suicide
-    usage: /<command>
+    usage: /<command> [player]
+    permission: instantdeath.kill.self
+    permission-message: "&cYou do not have permission to use this command."
+
+permissions:
+  instantdeath.kill.others:
+    description: Allows player to kill others using /kill <player>
+    default: op
+
+  instantdeath.kill.self:
+    description: Allows player to kill themselves
+    default: true

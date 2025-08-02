@@ -6,7 +6,7 @@
 
     <groupId>its.felk</groupId>
     <artifactId>InstantDeath</artifactId>
-    <version>1.0.0</version>
+    <version>2.0.0</version>
     <packaging>jar</packaging>
 
     <name>InstantDeath</name>
@@ -27,7 +27,6 @@
     </repositories>
 
     <dependencies>
-        <!-- CraftBukkit dependency marked as provided -->
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>craftbukkit</artifactId>
@@ -58,30 +57,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.2.4</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <filters>
-                                <filter>
-                                    <artifact>*:*</artifact>
-                                    <excludes>
-                                        <!-- Avoid risky dependencies -->
-                                        <exclude>org/bukkit/craftbukkit/libs/**</exclude>
-                                        <exclude>org/sqlite/**</exclude>
-                                        <exclude>org/apache/commons/io/**</exclude>
-                                        <exclude>org/fusesource/**</exclude>
-                                        <exclude>org/ibex/**</exclude>
-                                        <exclude>com/mysql/**</exclude>
-                                    </excludes>
-                                </filter>
-                            </filters>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>
