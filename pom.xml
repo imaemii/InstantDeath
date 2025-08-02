@@ -16,6 +16,13 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>MyEpicRepo</id>
+            <url>https://myepicwebsite.net/maven-repo</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <!-- CraftBukkit dependency marked as provided -->
         <dependency>
