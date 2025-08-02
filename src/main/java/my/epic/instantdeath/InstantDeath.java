@@ -98,11 +98,14 @@ public final class InstantDeath extends JavaPlugin {
     }
 
     private void handleKill(Player target, boolean selfKill, Player killer) {
-        target.setHealth(0.0);
-
-        String key = selfKill ? "self-kill" : "killed-by-other";
-        String msg = formatMessage(getMessage(key), target, killer);
-        target.sendMessage(msg);
+        if (selfKill) {
+            target.damage(Float.MAX_VALUE);
+            String msg = formatMessage(getMessage("self-kill"), target, killer);
+            target.sendMessage(msg);
+        } else {
+            target.damage(Float.MAX_VALUE, killer);
+            // No custom killed-by-other message to let vanilla handle death messages
+        }
     }
 
     private boolean hasKillPermission(Player player) {

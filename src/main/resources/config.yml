@@ -5,7 +5,6 @@ settings:
 messages:
   self-kill: "&cYou have died at &eX: %x%&c, &eY: %y%&c, &eZ: %z%"
   target-kill: "&cYou have killed %target% at &eX: %x%&c, &eY: %y%&c, &eZ: %z%"
-  killed-by-other: "&cYou were killed by %killer%!"
   player-not-found: "&cPlayer '%target%' not found."
   no-permission: "&cYou do not have permission to kill others."
   usage: "&cUsage: /%label% [player]"
