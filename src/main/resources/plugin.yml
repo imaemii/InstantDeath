@@ -4,11 +4,11 @@ main: my.epic.instantdeath.InstantDeath
 api-version: '1.6.1'
 authors: [ Emilia ]
 description: A simple plugin that lets you kill yourself with /kill without needing any special permissions
-website: https://myepicwebsite.net
+website: https://MyEpicWebsite.net
+folia-supported: true
 commands:
   kill:
     description: Kill yourself
     aliases:
       - suicide
     usage: /<command>
-folia-supported: true
