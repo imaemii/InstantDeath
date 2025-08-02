@@ -1,5 +1,5 @@
 name: InstantDeath
-version: 'v1.0'
+version: 'v1.0.0'
 main: my.epic.instantdeath.InstantDeath
 api-version: '1.6.1'
 authors: [ Emilia ]
