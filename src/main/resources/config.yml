@@ -1,0 +1,17 @@
+# InstantDeath plugin configuration
+settings:
+  # You need instantdeath.kill.self to kill yourself
+  self-kill-requires-permission: false
+  # If you die it tells you where you died in chat
+  show-death-location-on-kill: true
+
+messages:
+  self-kill: "&cYou have died at &eX: %x%&c, &eY: %y%&c, &eZ: %z%"
+  target-kill: "&cYou have killed %target%."
+  death-location: "&cYou died at &eX: %x%&c, &eY: %y%&c, &eZ: %z%"
+  player-not-found: "&cPlayer '%target%' not found."
+  no-permission: "&cYou do not have permission to kill others."
+  usage: "&cUsage: /%label% [player]"
+  console-kill: "Player %target% killed from console."
+  console-player-not-found: "Player '%target%' not found."
+  console-usage: "Usage from console: /%label% <player>"
