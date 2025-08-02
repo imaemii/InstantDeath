@@ -20,7 +20,6 @@
         <repository>
             <id>MyEpicRepo</id>
             <url>https://myepicwebsite.net/maven-repo</url>
-            <!-- Enable snapshot versions since craftbukkit is a snapshot version -->
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
@@ -45,7 +44,6 @@
             </resource>
         </resources>
         <plugins>
-            <!-- Compiler Plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -56,7 +54,6 @@
                 </configuration>
             </plugin>
 
-            <!-- Shade Plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
