@@ -1,129 +1,129 @@
 package my.epic.instantdeath;
 
-import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
+import org.bukkit.Location;
+import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public final class InstantDeath extends JavaPlugin {
-
-    private Map<String, String> messages = new HashMap<>();
 
     @Override
     public void onEnable() {
         saveDefaultConfig();
-        loadMessages();
-        getLogger().info("[InstantDeath] Made with love by Emilia");
-        getLogger().info("[InstantDeath] Trans lives matter! :3");
+        getLogger().info("[InstantDeath] Plugin enabled.");
     }
 
     @Override
     public void onDisable() {
-        getLogger().info("[InstantDeath] Thanks for using Instant Death <3");
-    }
-
-    private void loadMessages() {
-        messages.clear();
-        if (getConfig().isConfigurationSection("messages")) {
-            for (String key : getConfig().getConfigurationSection("messages").getKeys(false)) {
-                String msg = getConfig().getString("messages." + key, "");
-                messages.put(key, ChatColor.translateAlternateColorCodes('&', msg));
-            }
-        }
-    }
-
-    private String getMessage(String key) {
-        return messages.getOrDefault(key, ChatColor.RED + "Missing message: " + key);
+        getLogger().info("[InstantDeath] Plugin disabled.");
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        String cmd = command.getName().toLowerCase();
+    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+        if (!cmd.getName().equalsIgnoreCase("kill")) {
+            return false;
+        }
 
         if (!(sender instanceof Player)) {
-            handleConsoleCommand(sender, cmd, args);
+            // Console only supports: /kill <player>
+            if (args.length == 1) {
+                Player target = getServer().getPlayerExact(args[0]);
+                String tpl = colorize(getConfig().getString("messages.console-kill", "Player %target% killed from console."));
+                if (target != null) {
+                    target.setHealth(0);  // ← int
+                    getLogger().info(tpl.replace("%target%", target.getName()));
+                } else {
+                    String msg = colorize(getConfig().getString("messages.console-player-not-found",
+                            "Player '%target%' not found."));
+                    getLogger().info(msg.replace("%target%", args[0]));
+                }
+            } else {
+                String usg = colorize(getConfig().getString("messages.console-usage",
+                        "Usage from console: /%label% <player>"));
+                getLogger().info(usg.replace("%label%", label));
+            }
             return true;
         }
 
         Player player = (Player) sender;
+        boolean requireSelf = getConfig().getBoolean("settings.self-kill-requires-permission", false);
+        boolean showDeathLoc = getConfig().getBoolean("settings.show-death-location-on-kill", true);
+        boolean suicideAlias = label.equalsIgnoreCase("suicide");
 
-        if ((cmd.equals("kill") || cmd.equals("suicide")) && args.length <= 1) {
-            if (args.length == 0) {
-                // Self kill with optional permission requirement
-                boolean requirePerm = getConfig().getBoolean("settings.self-kill-requires-permission", false);
-                if (!requirePerm || player.hasPermission("instantdeath.kill.self") || player.isOp()) {
-                    handleKill(player, true, player);
-                } else {
-                    player.sendMessage(getMessage("no-permission"));
-                }
-            } else {
-                // Targeted kill requires permission
-                if (hasKillPermission(player)) {
-                    Player targetPlayer = getServer().getPlayerExact(args[0]);
-                    if (targetPlayer != null) {
-                        handleKill(targetPlayer, false, player);
-                        // Inform the killer with a message without coords
-                        String msg = formatMessage(getMessage("target-kill"), targetPlayer, player);
-                        player.sendMessage(msg);
-                    } else {
-                        player.sendMessage(getMessage("player-not-found").replace("%target%", args[0]));
-                    }
-                } else {
-                    player.sendMessage(getMessage("no-permission"));
-                }
+        if (args.length == 0) {
+            // Self-kill
+            if (requireSelf && !player.hasPermission("instantdeath.kill.self")) {
+                String nomsg = colorize(getConfig().getString("messages.no-permission",
+                        "&cYou do not have permission to kill yourself."));
+                player.sendMessage(nomsg);
+                return true;
             }
+            handleKill(player, player, showDeathLoc, true);
             return true;
         }
 
-        player.sendMessage(getMessage("usage").replace("%label%", label));
+        if (args.length == 1) {
+            if (suicideAlias) {
+                String usg = colorize(getConfig().getString("messages.usage", "&cUsage: /%label% [player]"));
+                player.sendMessage(usg.replace("%label%", label));
+                return true;
+            }
+
+            Player target = getServer().getPlayerExact(args[0]);
+            if (target == null) {
+                String notf = colorize(getConfig().getString("messages.player-not-found",
+                        "&cPlayer '%target%' not found."));
+                player.sendMessage(notf.replace("%target%", args[0]));
+                return true;
+            }
+
+            if (!player.hasPermission("instantdeath.kill.others")) {
+                String nomsg = colorize(getConfig().getString("messages.no-permission",
+                        "&cYou do not have permission to kill others."));
+                player.sendMessage(nomsg);
+                return true;
+            }
+
+            handleKill(target, player, showDeathLoc, false);
+
+            String killerTpl = colorize(getConfig().getString("messages.target-kill", "&cYou have killed %target%."));
+            player.sendMessage(killerTpl.replace("%target%", target.getName()));
+            return true;
+        }
+
+        // Too many args
+        String usg = colorize(getConfig().getString("messages.usage", "&cUsage: /%label% [player]"));
+        player.sendMessage(usg.replace("%label%", label));
         return true;
     }
 
-    private void handleConsoleCommand(CommandSender sender, String cmd, String[] args) {
-        if ((cmd.equals("kill") || cmd.equals("suicide")) && args.length == 1) {
-            Player targetPlayer = getServer().getPlayerExact(args[0]);
+    private void handleKill(Player victim, Player killer, boolean showDeathLoc, boolean self) {
+        Location loc = victim.getLocation();
+        int x = loc.getBlockX(), y = loc.getBlockY(), z = loc.getBlockZ();
 
-            if (targetPlayer != null) {
-                targetPlayer.setHealth(0.0);
-                getLogger().info(getMessage("console-kill").replace("%target%", targetPlayer.getName()));
-            } else {
-                getLogger().info(getMessage("console-player-not-found").replace("%target%", args[0]));
-            }
-        } else {
-            getLogger().info(getMessage("console-usage").replace("%label%", cmd));
+        victim.setHealth(0);  // kills immediately (int overload)
+
+        if (self) {
+            String selfTpl = getConfig().getString("messages.self-kill",
+                    "&cYou have died at &eX: %x%&c, &eY: %y%&c, &eZ: %z%");
+            String msg = colorize(selfTpl)
+                    .replace("%x%", String.valueOf(x))
+                    .replace("%y%", String.valueOf(y))
+                    .replace("%z%", String.valueOf(z));
+            victim.sendMessage(msg);
+        } else if (showDeathLoc) {
+            String locTpl = getConfig().getString("messages.death-location",
+                    "&cYou died at &eX: %x%&c, &eY: %y%&c, &eZ: %z%");
+            String msg = colorize(locTpl)
+                    .replace("%x%", String.valueOf(x))
+                    .replace("%y%", String.valueOf(y))
+                    .replace("%z%", String.valueOf(z));
+            victim.sendMessage(msg);
         }
     }
 
-    private void handleKill(Player target, boolean selfKill, Player killer) {
-        if (selfKill) {
-            target.damage(Float.MAX_VALUE);
-            String msg = formatMessage(getMessage("self-kill"), target, killer);
-            target.sendMessage(msg);
-        } else {
-            target.damage(Float.MAX_VALUE, killer);
-            boolean showDeathLoc = getConfig().getBoolean("settings.show-death-location-on-kill", false);
-            if (showDeathLoc) {
-                String deathLocMsg = formatMessage(getMessage("death-location"), target, killer);
-                target.sendMessage(deathLocMsg);
-            }
-            // killer gets target-kill message (already handled in onCommand)
-        }
-    }
-
-    private boolean hasKillPermission(Player player) {
-        return player.hasPermission("instantdeath.kill.others") || player.isOp();
-    }
-
-    private String formatMessage(String template, Player target, Player killer) {
-        return template
-                .replace("%x%", String.valueOf(target.getLocation().getBlockX()))
-                .replace("%y%", String.valueOf(target.getLocation().getBlockY()))
-                .replace("%z%", String.valueOf(target.getLocation().getBlockZ()))
-                .replace("%target%", target.getName())
-                .replace("%killer%", killer != null ? killer.getName() : "Console");
+    // simple Bukkit 1.1‑R5 fallback for colors—avoids translateAlternateColorCodes
+    private static String colorize(String text) {
+        return text == null ? "" : text.replace('&', '§');
     }
 }

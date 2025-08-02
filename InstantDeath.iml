@@ -7,4 +7,7 @@
       </configuration>
     </facet>
   </component>
+  <component name="McpModuleSettings">
+    <option name="srgType" value="SRG" />
+  </component>
 </module>
