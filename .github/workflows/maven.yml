@@ -29,9 +29,14 @@ jobs:
         cache: maven
     - name: Build with Maven
       run: mvn -B package --file pom.xml
-      
+
+    - name: Get built jar path
+      id: get-jar
+      run: |
+        echo "jar_path=$(find target -name 'InstantDeath-*.jar' | head -n 1)" >> $GITHUB_OUTPUT
+
     - name: Upload built jar
       uses: actions/upload-artifact@v4
       with:
-       name: InstantDeath
-       path: target/InstantDeath-*.jar
+        name: InstantDeath
+        path: ${{ steps.get-jar.outputs.jar_path }}
