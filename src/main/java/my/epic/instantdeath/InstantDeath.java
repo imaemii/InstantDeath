@@ -10,12 +10,14 @@ public final class InstantDeath extends JavaPlugin {
     @Override
     public void onEnable() {
         saveDefaultConfig();
-        getLogger().info("[InstantDeath] Plugin enabled.");
+        getLogger().info("[InstantDeath] RUNNING LEGACY EDITION");
+        getLogger().info("[InstantDeath] Made with love by Emilia");
+        getLogger().info("[InstantDeath] Trans lives matter! :3");
     }
 
     @Override
     public void onDisable() {
-        getLogger().info("[InstantDeath] Plugin disabled.");
+        getLogger().info("[InstantDeath] Thanks for using Instant Death <3");
     }
 
     @Override
