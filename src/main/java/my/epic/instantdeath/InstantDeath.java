@@ -19,6 +19,8 @@ public final class InstantDeath extends JavaPlugin {
         loadMessages();
         getLogger().info("[InstantDeath] Made with love by Emilia");
         getLogger().info("[InstantDeath] Trans lives matter! :3");
+        int pluginId = 12345;
+        Metrics metrics = new Metrics(this, pluginId);
     }
 
     @Override
